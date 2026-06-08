@@ -1,0 +1,9 @@
+datasets
+ollama
+pandas
+scikit-learn
+tqdm
+matplotlib
+wikipedia
+google-genai
+python-dotenv
