@@ -1,4 +1,5 @@
 import json
+import os
 import ollama
 import wikipedia
 import time
@@ -110,8 +111,20 @@ def main():
         return
 
     results = []
+    if os.path.exists("data/raw_responses.json"):
+        with open("data/raw_responses.json", "r", encoding="utf-8") as f:
+            try:
+                results = json.load(f)
+                print(f"Wznowiono, znaleziono {len(results)} gotowych odpowiedzi.")
+            except:
+                pass
+                
+    processed_ids = {r["id"] for r in results}
     
     for i, q in enumerate(tqdm(questions, desc="Generating responses")):
+        if q["id"] in processed_ids:
+            continue
+            
         question_text = q['question']
         context_text = format_context(q['context'])
         

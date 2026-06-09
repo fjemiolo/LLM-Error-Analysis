@@ -5,6 +5,7 @@ from collections import Counter
 from google import genai
 from dotenv import load_dotenv
 import os
+import time
 from tqdm import tqdm
 
 load_dotenv()
@@ -56,17 +57,28 @@ Model Prediction: {prediction}
 
 Is the model prediction correct? Answer ONLY with 'YES' or 'NO'."""
     
-    try:
-        response = client.models.generate_content(
-            model='gemini-1.5-pro',
-            contents=prompt,
-            config={'temperature': 0.0}
-        )
-        answer = response.text.strip().upper()
-        return "YES" in answer
-    except Exception as e:
-        print(f"Gemini error in evaluator: {e}")
-        return False
+    max_retries = 5
+    base_delay = 5
+    
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config={'temperature': 0.0}
+            )
+            answer = response.text.strip().upper()
+            return "YES" in answer
+        except Exception as e:
+            if "429" in str(e) or "quota" in str(e).lower() or "exhausted" in str(e).lower():
+                delay = base_delay * (2 ** attempt)
+                time.sleep(delay)
+            else:
+                print(f"Gemini error in evaluator: {e}")
+                return False
+                
+    print("Max retries exceeded for Gemini evaluator.")
+    return False
 
 def main():
     if os.path.exists("data/evaluated_responses.json"):

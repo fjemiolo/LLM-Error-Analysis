@@ -7,17 +7,15 @@ Ten plik ułatwi współpracę w zespole lub z kolejnymi agentami. Pokazuje on d
 - **Status:** Wygenerowano plik `data/sampled_100_questions.json`.
 - Mamy wylosowaną, zbalansowaną i "zamrożoną" próbkę 100 pytań HotpotQA (easy, medium, hard).
 
-## 🟡 Etap 2: Generowanie Odpowiedzi (W TRAKCIE)
+## 🟢 Etap 2: Generowanie Odpowiedzi (ZAKOŃCZONO)
 - **Skrypt:** `02_generate_responses.py`
-- **Co teraz robi program:** To zadanie aktualnie mieli w tle na Twoim procesorze. Skrypt bierze każde z 100 pytań i zmusza Llama 3.1 8B do odpowiedzi na 7 różnych sposobów (część wariantów wielokrotnie, stąd w sumie ok. 3400 zapytań!).
-- **Bezpieczeństwo:** Skrypt jest odseparowany. **On wyłącznie ZBIERA odpowiedzi** i nic z nimi więcej nie robi. Zrzuca je w locie co 5 pytań do pliku `data/raw_responses.json`. Jeśli byś go teraz zabił, stracisz progres niezapisanych pytań i musiałbyś go zacząć od nowa.
-- **⏱️ Estymacja czasu:** Średnio jedno pytanie (z 34 próbkami) zajmuje Twojemu Macowi M5 około 3 minut i 15 sekund (niesamowicie szybko jak na odpalanie RAG-a i 8B modelu lokalnie). Wykonanie pozostałych ~90 pytań zajmie około **4,5 do 5 godzin**.
+- **Status:** Wygenerowano wszystkie 100 pytań! Zapisano potężny plik `data/raw_responses.json`. M5 przetrwał wielogodzinny maraton z Llama 3.1. Praca lokalnego procesora na tak dużą skalę została oficjalnie i z pełnym sukcesem zakończona.
 
-## 🔴 Etap 3: Ewaluacja Odpowiedzi (CZEKA)
+## 🟡 Etap 3: Ewaluacja Odpowiedzi (GOTOWE DO ODPALENIA PRZEZ ZESPÓŁ)
 - **Skrypt:** `03_evaluate_metrics.py`
-- Ocenia odpowiedzi z Etapu 2 (Exact Match, F1, oraz LLM-as-a-judge za pomocą Google Gemini Pro).
-- Skrypt został tak przebudowany, by posiadać funkcję wznawiania (checkpointing). Możesz go zabić w połowie, a następnym razem po prostu pominie sprawdzone odpowiedzi! Wynik trafi do `data/evaluated_responses.json`.
-- **⏱️ Estymacja czasu:** Około **3-4 godzin**. Samo Gemini ocenia w sekundę, ALE darmowe konto AI Studio ma limit 15 zapytań na minutę. Przetworzenie ~3400 odpowiedzi będzie wymagało cierpliwości API.
+- **Status logiki:** Zaktualizowano API z przestarzałego `gemini-1.5` na nowiutkie, oficjalnie wspierane `gemini-2.5-flash`. Dodano też algorytm "Exponential Backoff", dzięki czemu w razie darmowych limitów (rate-limit) skrypt bezpiecznie zaczeka i ponowi próbę bez wywalania błędu (brak błędu 404/429).
+- **Zadanie dla zespołu:** Uruchomić ten skrypt (`python 03_evaluate_metrics.py`). Skrypt oceni odpowiedzi w chmurze (Zero obciążenia dla komputera) i zrzuci wynik do `data/evaluated_responses.json`.
+- **⏱️ Estymacja czasu:** Z uwagi na limity darmowego API 15 zapytań/minutę, wykonanie ok. 3400 ocen zajmie około **3-4 godziny** pracy w tle. Skrypt posiada wznawianie (checkpointing).
 
 ## 🔴 Etap 4: Klasyfikacja Błędów (CZEKA)
 - **Skrypt:** `04_classify_errors.py`
