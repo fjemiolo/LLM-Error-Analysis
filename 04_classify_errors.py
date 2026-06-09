@@ -1,15 +1,11 @@
 import json
 from collections import Counter
-from google import genai
+import ollama
 from dotenv import load_dotenv
 import os
 from tqdm import tqdm
 
 load_dotenv()
-try:
-    client = genai.Client()
-except Exception as e:
-    client = None
 
 def classify_error(question, context, ground_truth, prediction):
     prompt = f"""You are an expert linguistic error annotator.
@@ -30,16 +26,13 @@ Model Prediction: {prediction}
 Respond ONLY with the number (1-5) and the category name, e.g. "5. Entity confusion"."""
 
     try:
-        if not client:
-            return "API Error"
-            
-        response = client.models.generate_content(
-            model='gemini-1.5-pro',
-            contents=prompt,
-            config={'temperature': 0.0}
+        response = ollama.chat(
+            model='gemma2',
+            messages=[{'role': 'user', 'content': prompt}],
+            options={'temperature': 0.0}
         )
         
-        answer = response.text.strip()
+        answer = response['message']['content'].strip()
         if "1" in answer or "Hallucination" in answer: return "Hallucination"
         if "2" in answer or "reasoning" in answer: return "Multi-hop reasoning error"
         if "3" in answer or "Format" in answer: return "Format error"
@@ -48,7 +41,7 @@ Respond ONLY with the number (1-5) and the category name, e.g. "5. Entity confus
         
         return "Unknown error"
     except Exception as e:
-        print(f"Gemini error: {e}")
+        print(f"Ollama error: {e}")
         return "API Error"
 
 def analyze_stochasticity(responses, metrics_list):

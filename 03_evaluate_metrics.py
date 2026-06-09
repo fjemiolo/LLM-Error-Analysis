@@ -2,18 +2,13 @@ import json
 import re
 import string
 from collections import Counter
-from google import genai
+import ollama
 from dotenv import load_dotenv
 import os
 import time
 from tqdm import tqdm
 
 load_dotenv()
-try:
-    client = genai.Client()
-except Exception as e:
-    print("WARNING: Could not initialize Gemini client. Did you set GEMINI_API_KEY in .env?")
-    client = None
 
 def normalize_answer(s):
     def remove_articles(text):
@@ -43,9 +38,6 @@ def f1_score(prediction, ground_truth):
     return f1
 
 def llm_as_judge(question, prediction, ground_truth):
-    if not client:
-        return False
-        
     prompt = f"""You are an expert evaluator for question answering tasks.
 Your job is to determine if the model's prediction is factually equivalent to the ground truth answer.
 Tolerate variations in wording, synonyms, and extra helpful context as long as the core facts match.
@@ -57,28 +49,17 @@ Model Prediction: {prediction}
 
 Is the model prediction correct? Answer ONLY with 'YES' or 'NO'."""
     
-    max_retries = 5
-    base_delay = 5
-    
-    for attempt in range(max_retries):
-        try:
-            response = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=prompt,
-                config={'temperature': 0.0}
-            )
-            answer = response.text.strip().upper()
-            return "YES" in answer
-        except Exception as e:
-            if "429" in str(e) or "quota" in str(e).lower() or "exhausted" in str(e).lower():
-                delay = base_delay * (2 ** attempt)
-                time.sleep(delay)
-            else:
-                print(f"Gemini error in evaluator: {e}")
-                return False
-                
-    print("Max retries exceeded for Gemini evaluator.")
-    return False
+    try:
+        response = ollama.chat(
+            model='gemma2',
+            messages=[{'role': 'user', 'content': prompt}],
+            options={'temperature': 0.0}
+        )
+        answer = response['message']['content'].strip().upper()
+        return "YES" in answer
+    except Exception as e:
+        print(f"Ollama error in evaluator: {e}")
+        return False
 
 def main():
     if os.path.exists("data/evaluated_responses.json"):
