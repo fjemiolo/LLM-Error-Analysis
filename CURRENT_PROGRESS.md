@@ -26,7 +26,21 @@ Dla odpowiedzi z oceną "LLM-judge = 0", skrypt kategoryzuje błąd (halucynacja
 Skrypt: 05_analyze_results.py
 Generuje pliki graficzne (wykresy słupkowe, macierze) z wynikami do wklejenia w raporcie.
 
-## 🟡 Etap 6: Walidacja Ludzka (W TRAKCIE - Wygenerowano próbkę, czeka na człowieka)
-- **Skrypt:** `06_prepare_manual_annotation.py`
-- Pobiera pliki z Etapu 4 i generuje czysty plik Excel (`data/manual_annotation/adnotacja_reczna.csv`) z próbką 100 błędów do weryfikacji ręcznej w celu obliczenia Cohen's Kappa.
-- **⏱️ Estymacja czasu:** Wygenerowanie pliku **1 sekunda**. Ręczne ocenienie 100 pytań w Excelu przez wyznaczoną osobę zajmie **około 15-30 minut**.
+## 🟡 Etap 6: Walidacja Ludzka (W TRAKCIE - Czeka na człowieka)
+- **Skrypt:** Brak (Ręczna robota w Excelu)
+- Otwórz plik `data/manual_annotation/INSTRUKCJA_ADNOTACJI.md` – tam jest dokładna rozpiska, jak przypisywać cyferki 1-5.
+- Pamiętaj, aby uzupełnić kolumnę "Twoja Klasyfikacja (wpisz 1-5)" w pliku `adnotacja_reczna.csv`! Zapisz plik.
+
+## 🔴 Etap 7: Wyliczenie Cohen's Kappa (CZEKA NA ZAKOŃCZENIE ETAPU 6)
+- **Skrypt:** `07_calculate_kappa.py`
+- Gdy wypełnicie już ręcznie próbkę z Etapu 6, po prostu odpalcie ten skrypt w terminalu: `python 07_calculate_kappa.py`. 
+- Automatycznie połączy on Wasze oceny z ukrytymi ocenami Gemmy i wypluje gotowy, naukowy wskaźnik zgodności do raportu!
+
+## 🔴 Etap 8: Przygotowanie Prezentacji Zaliczeniowej (CZEKA)
+Otwórzcie plik `wyniki_i_wnioski/RAPORT_KONCOWY.md`. Na jego podstawie złóżcie ok. 6-8 slajdów:
+1. **Wstęp i metodologia** (zbiór HotpotQA, odpytywanie 7 konfiguracji Llama 3.1 w Ollamie).
+2. **Kryzys klasycznych metryk** (Wykres 1 - pokazanie, dlaczego Exact Match = 0% a "LLM-as-a-judge" działa).
+3. **Typologia błędów** (Wykres 2 - udowodnienie przewagi błędów Multi-hop reasoning nad np. zwykłymi halucynacjami).
+4. **Błędy stochastyczne a systematyczne** (Wykres 3 - zjawisko powtarzalności błędu w modelach LLM).
+5. **Wynik z Walidacji Ludzkiej (Etap 7)** (Zrzut ekranu wyniku konsoli pokazującego % dokładności i wskaźnik Cohen's Kappa - dowód na naukową wiarygodność sędziego).
+6. **Wnioski z Case Study** (np. że nawet mocarne modele dają się czasem nabrać na "lanie wody").

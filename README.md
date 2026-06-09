@@ -53,6 +53,15 @@ Skrypt używający `pandas` i `matplotlib` do agregacji danych z klasyfikacji. G
 - Formatuje je do pliku CSV (`data/manual_annotation/adnotacja_reczna.csv`), ukrywając klasyfikację AI.
 - Służy do ślepej adnotacji ręcznej przez wyznaczoną osobę w celu wyliczenia miary zgodności i udowodnienia rzetelności sędziego AI.
 
+### 7. `07_calculate_kappa.py` (Zgodność człowieka z AI)
+- Oczekuje wypełnionego przez badacza pliku `adnotacja_reczna.csv`.
+- Zestawia ręczne oceny (1-5) z ukrytym kluczem oceny wygenerowanym przez Gemmę.
+- Wylicza procentową dokładność (Accuracy) oraz współczynnik Cohen's Kappa, określający poziom wiarygodności sędziego.
+
+### 8. Utworzenie Prezentacji Zaliczeniowej (Finał)
+- Zespół wykorzystuje wykresy z folderu `wyniki_i_wnioski/` oraz wyliczoną w Etapie 7 statystykę Cohen's Kappa do zbudowania końcowych slajdów na obronę projektu.
+- Plik `wyniki_i_wnioski/RAPORT_KONCOWY.md` stanowi bazę merytoryczną do opowiedzenia o zjawiskach takich jak Multi-hop reasoning errors, zapaść metryk n-gramowych czy halucynacje.
+
 ## Cele Projektu i Oczekiwane Wyniki
 - Zrozumienie na jakich pytaniach 8-miliardowy model się poddaje.
 - Sprawdzenie skuteczności "Chain-of-Thought" oraz RAG-a na otwartej architekturze błędu.

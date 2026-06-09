@@ -62,9 +62,14 @@ Każda odpowiedź jest najpierw oceniana przez 3 niezależne metryki: Exact Matc
 4. **Błąd negacji** — przeoczenie słowa „nie” w kontekście.
 5. **Pomylenie encji** — wybór powiązanego, ale błędnego obiektu z tekstu.
 
-### 👩‍🔬 Ręczna Walidacja (Złoty Standard dla Zespołu)
-Aby potwierdzić przed wykładowcą, że nasz algorytm sędziowski jest poprawny, przeprowadzamy walidację jakości na małej próbce.
-Wyznaczona jedna osoba z zespołu (lub cały zespół) dokonuje ślepej adnotacji losowej próby 100 błędów w osobnym pliku CSV, po czym mierzymy statystyczną zgodność (*Cohen's Kappa*) pomiędzy człowiekiem a systemem.
+### 6. 👩‍🔬 Ręczna Walidacja (Złoty Standard dla Zespołu)
+Aby potwierdzić przed wykładowcą, że nasz algorytm sędziowski jest poprawny, przeprowadzamy walidację jakości na małej próbce. Wyznaczona jedna osoba z zespołu dokonuje ślepej adnotacji losowej próby 100 błędów w pliku CSV (`adnotacja_reczna.csv`).
+
+### 7. 🧮 Wyliczenie Cohen's Kappa
+Po uzupełnieniu adnotacji uruchamiany jest dedykowany skrypt (`07_calculate_kappa.py`), który zestawia odpowiedzi człowieka z AI i liczy statystyczny współczynnik zgodności w ocenie błędów językowych LLMa.
+
+### 8. 📊 Stworzenie Prezentacji Zaliczeniowej
+Ostatnim krokiem jest zebranie 3 wygenerowanych wykresów z folderu `wyniki_i_wnioski`, wyniku Kappa z Etapu 7 oraz merytorycznych konkluzji (plik `RAPORT_KONCOWY.md`) na zgrabne slajdy. Główny akcent prezentacji musi paść na dowiedzenie, jak bardzo przestarzałe są klasyczne metryki (EM/F1) oraz z czego wynika dominacja błędów "Multi-hop" w Llama 3.1 8B.
 
 ---
 
